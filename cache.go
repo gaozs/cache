@@ -9,7 +9,6 @@ import (
 // a cache can hold special num ID:Data pairs for quick use, like map, but will drop oldest ID:Data when full
 // each R/W operation will set the ID:Data to newest
 // ID is a type which can be used in map index, Data is interface{}
-
 type CacheProvider struct {
 	cacheLimitNum int
 	count         int
@@ -49,7 +48,7 @@ func (c *CacheProvider) Set(id, data interface{}) (err error) {
 	if ok {
 		// id in cache, update diretly
 		e.Value.(*cacheData).data = data
-		c.list.MoveToFront(e) // move this to front(which is newest r/w)
+		c.list.MoveToFront(e) // move this to front(which is newest)
 		return
 
 	}
@@ -65,7 +64,7 @@ func (c *CacheProvider) Get(id interface{}) (data interface{}, ok bool) {
 	if ok {
 		// id in cache
 		data = e.Value.(*cacheData).data
-		c.list.MoveToFront(e) // move this to front(which is newest r/w)
+		c.list.MoveToFront(e) // move this to front(which is newest)
 	}
 	return
 }
@@ -89,6 +88,26 @@ func (c *CacheProvider) GetSet(id, newData interface{}) (data interface{}, err e
 	return
 }
 
+func (c *CacheProvider) Del(id interface{}) (ok bool) {
+	c.lock.Lock()
+	defer c.lock.Unlock()
+
+	e, ok := c.idxs[id]
+	if ok {
+		// id in cache
+		c.list.Remove(e)
+		delete(c.idxs, id)
+		c.count--
+	}
+	return
+}
+
+// query cache usage
+func (c *CacheProvider) Usage() (count, limit int) {
+	return c.count, c.cacheLimitNum
+}
+
+// add a id/data, if cache full, drop oldest one
 func (c *CacheProvider) addIDData(id, data interface{}) (err error) {
 	if c.count == c.cacheLimitNum {
 		// cache is full, replace back element
