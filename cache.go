@@ -24,20 +24,19 @@ type cacheData struct {
 
 func NewCache(cacheLimitNum int) (c *CacheProvider, err error) {
 	if cacheLimitNum <= 0 {
-		err = errors.New("Cache num is <=0!")
+		err = errors.New("cache num is <=0")
 		return
 	}
-	cp := new(CacheProvider)
-	cp.cacheLimitNum = cacheLimitNum
-	cp.idxs = make(map[interface{}]*list.Element, cacheLimitNum)
-	cp.list = list.New()
-	c = cp
+	c = new(CacheProvider)
+	c.cacheLimitNum = cacheLimitNum
+	c.idxs = make(map[interface{}]*list.Element, cacheLimitNum)
+	c.list = list.New()
 	return
 }
 
 func (c *CacheProvider) Set(id, data interface{}) (err error) {
 	if c.count > c.cacheLimitNum {
-		err = errors.New("Cache count is over limit, something is wrong!")
+		err = errors.New("cache count is over limit, something is wrong")
 		return
 	}
 
@@ -113,7 +112,7 @@ func (c *CacheProvider) addIDData(id, data interface{}) (err error) {
 		// cache is full, replace back element
 		e := c.list.Back()
 		if e == nil {
-			err = errors.New("last element data is nil, something is wrong!")
+			err = errors.New("last element data is nil, something is wrong")
 			return
 		}
 		delete(c.idxs, e.Value.(*cacheData).id)
