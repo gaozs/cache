@@ -31,13 +31,17 @@ func TestCache(t *testing.T) {
 	if res.(int) != 100 {
 		t.Error(res, "!= 100")
 	}
+	err = c.Set(1, 200)
+	if err != nil {
+		t.Error(err)
+	}
 	var ok bool
 	res, ok = c.Get(1)
 	if !ok {
 		t.Error("can't get 1")
 	}
-	if res.(int) != 100 {
-		t.Error(res, "!= 100")
+	if res.(int) != 200 {
+		t.Error(res, "!= 200")
 	}
 
 	ok = c.Del(1)
