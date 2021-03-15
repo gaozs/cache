@@ -1,3 +1,3 @@
-module gaozs.ddns.net/go/util/cache
+module cloudgao.vicp.net/go/util/cache
 
 go 1.16
