@@ -1,3 +1,3 @@
-module cloudgao.vicp.net/go/util/cache
+module github.com/go-cache
 
 go 1.16
